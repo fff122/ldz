@@ -1,4 +1,178 @@
-<!DOCTYPE html>
+                    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const amountOptions = document.querySelectorAll('.amount-option');
+            const customAmountContainer = document.getElementById('customAmountContainer');
+            
+            // 默认选中第一个金额选项
+            if (amountOptions.length > 0) {
+                amountOptions[0].classList.add('selected');
+            }
+            
+            amountOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // 移除其他选项的选中状态
+                    amountOptions.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // 添加当前选项的选中状态
+                    this.classList.add('selected');
+                    
+                    // 处理自定义金额选项
+                    if (this.dataset.amount === 'custom') {
+                        customAmountContainer.style.display = 'block';
+                    } else {
+                        customAmountContainer.style.display = 'none';
+                    }
+                });
+            });
+            
+            // 表单提交事件
+            document.getElementById('donationForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // 获取输入的名字和电话
+                const name = document.getElementById('name').value;
+                const phone = document.getElementById('phone').value;
+                
+                // 验证表单
+                if (!name || !phone) {
+                    alert('请填写完整的姓名和电话信息');
+                    return;
+                }
+                
+                // 获取选中的金额
+                let amount;
+                const selectedAmount = document.querySelector('.amount-option.selected');
+                
+                if (selectedAmount.dataset.amount === 'custom') {
+                    amount = document.getElementById('customAmount').value;
+                    if (!amount || amount <= 0) {
+                        alert('请输入有效的捐款金额');
+                        return;
+                    }
+                } else {
+                    amount = selectedAmount.dataset.amount;
+                }
+                
+                // 创建模态框
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                
+                // 创建模态内容
+                const modalContent = document.createElement('div');
+                modalContent.className = 'modal-content';
+                modalContent.style.position = 'relative';
+                modalContent.style.maxHeight = '90vh';
+                modalContent.style.overflowY = 'auto';
+                
+                // 创建模态头部
+                const modalHeader = document.createElement('div');
+                modalHeader.className = 'modal-header';
+                
+                const urgencyBadge = document.createElement('div');
+                urgencyBadge.className = 'urgency-badge';
+                urgencyBadge.textContent = '紧急救助';
+                
+                const modalTitle = document.createElement('h3');
+                modalTitle.className = 'modal-title';
+                modalTitle.textContent = '微信扫码捐款';
+                
+                modalHeader.appendChild(urgencyBadge);
+                modalHeader.appendChild(modalTitle);
+                
+                // 创建模态主体
+                const modalBody = document.createElement('div');
+                modalBody.className = 'modal-body';
+                
+                const qrCode = document.createElement('img');
+                qrCode.className = 'qr-code';
+                qrCode.src = 'https://github.com/fff122/ldz/blob/main/ecb6327945924eaa97918cf58ed6cd98.jpg?raw=true';
+                qrCode.alt = '微信支付二维码';
+                qrCode.style.display = 'block';
+                qrCode.style.width = '80%';
+                qrCode.style.maxWidth = '250px';
+                qrCode.style.height = 'auto';
+                
+                const modalText = document.createElement('p');
+                modalText.className = 'modal-text';
+                modalText.textContent = `${name}，感谢您为刘德洲捐款 ${amount} 元。请使用微信扫描上方二维码完成捐款。`;
+                
+                const closeButton = document.createElement('button');
+                closeButton.className = 'modal-close';
+                closeButton.textContent = '完成捐款';
+                closeButton.addEventListener('click', function() {
+                    document.body.removeChild(modal);
+                    document.body.style.overflow = '';
+                });
+                
+                modalBody.appendChild(qrCode);
+                modalBody.appendChild(modalText);
+                modalBody.appendChild(closeButton);
+                
+                // 创建模态底部
+                const modalFooter = document.createElement('p');
+                modalFooter.className = 'modal-footer';
+                modalFooter.textContent = '您的爱心将给刘德洲带来生的希望';
+                
+                // 组装模态框
+                modalContent.appendChild(modalHeader);
+                modalContent.appendChild(modalBody);
+                modal.appendChild(modalContent);
+                modal.appendChild(modalFooter);
+                
+                // 添加到页面
+                document.body.appendChild(modal);
+                
+                // 确保弹窗在视窗中央显示
+                setTimeout(() => {
+                    const viewportHeight = window.innerHeight;
+                    const modalHeight = modalContent.offsetHeight;
+                    
+                    if (modalHeight > viewportHeight * 0.9) {
+                        modalContent.style.height = '90vh';
+                        modalContent.style.overflowY = 'auto';
+                    } else {
+                        modalContent.style.overflowY = 'visible';
+                    }
+                    
+                    // 防止页面滚动
+                    document.body.style.overflow = 'hidden';
+                }, 100);
+                
+                // 点击背景关闭弹窗
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        document.body.removeChild(modal);
+                        document.body.style.overflow = '';
+                    }
+                });
+                
+                // 添加ESC键关闭弹窗
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && document.body.contains(modal)) {
+                        document.body.removeChild(modal);
+                        document.body.style.overflow = '';
+                    }
+                });
+            });
+            
+            // 为悬浮按钮添加点击事件
+            const ctaBox = document.querySelector('.cta-box');
+            if (ctaBox) {
+                ctaBox.addEventListener('click', function() {
+                    document.getElementById('donate').scrollIntoView({behavior: 'smooth'});
+                });
+            }
+            
+            // 为顶部按钮添加点击事件
+            const headerCta = document.querySelector('.header-cta a');
+            if (headerCta) {
+                headerCta.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.getElementById('donate').scrollIntoView({behavior: 'smooth'});
+                });
+            }
+        });
+    </script><!DOCTYPE html>
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
@@ -457,6 +631,7 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.8);
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 1000;
@@ -469,6 +644,8 @@
             width: 340px;
             overflow: hidden;
             animation: modalFadeIn 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin: 0 auto;
         }
         
         @keyframes modalFadeIn {
@@ -510,7 +687,7 @@
         }
         
         .modal-body {
-            padding: 20px;
+            padding: 25px 20px;
             text-align: center;
         }
         
@@ -519,19 +696,22 @@
             margin: 0 auto 20px;
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: block;
+            width: 80%;
         }
         
         .modal-text {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             color: var(--text-dark);
             font-size: 15px;
+            line-height: 1.6;
         }
         
         .modal-close {
             display: block;
             width: 80%;
             margin: 0 auto;
-            padding: 12px;
+            padding: 14px;
             background: var(--gradient-primary);
             color: white;
             border: none;
@@ -540,6 +720,8 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            -webkit-appearance: none;
+            box-shadow: 0 4px 10px rgba(255, 118, 117, 0.3);
         }
         
         .modal-close:hover {
@@ -741,7 +923,7 @@
                 </p>
                 
                 <p class="story-paragraph">
-                    然而，就在德洲10岁的冬天，更大的不幸降临了。一场高烧后，他被送往省医院，医生诊断出他患有极为罕见的"进行性神经肌肉萎缩症"——一种会逐渐侵蚀全身肌肉和神经系统的疾病。<span class="highlight">医生们解释说，这种疾病会让他逐渐失去行动能力，最终导致呼吸肌麻痹而死亡。</span>
+                    然而，就在德洲<span class="highlight">15</span>岁的冬天，更大的不幸降临了。一场高烧后，他被送往省医院，医生诊断出他患有极为罕见的"进行性神经肌肉萎缩症"——一种会逐渐侵蚀全身肌肉和神经系统的疾病。<span class="highlight">医生们解释说，这种疾病会让他逐渐失去行动能力，最终导致呼吸肌麻痹而死亡。</span>
                 </p>
                 
                 <div class="story-quote">
@@ -749,7 +931,7 @@
                 </div>
                 
                 <p class="story-paragraph">
-                    如今17岁的德洲，疾病进展迅速得超出医生预期。<span class="highlight">他的双腿已经完全失去知觉，右手开始出现不自主抖动，连拿筷子吃饭都成了奢望。</span>尤为残忍的是，这种疾病不会影响智力，德洲完全清楚自己正在经历什么，他知道自己的生命正在倒计时。
+                    <span class="highlight">如今17岁的德洲，</span>疾病进展迅速得超出医生预期。<span class="highlight">他的双腿已经完全失去知觉，右手开始出现不自主抖动，连拿筷子吃饭都成了奢望。</span>尤为残忍的是，这种疾病不会影响智力，德洲完全清楚自己正在经历什么，他知道自己的生命正在倒计时。
                 </p>
                 
                 <p class="story-paragraph">
@@ -761,7 +943,7 @@
                     <ul class="medical-list">
                         <li><span>疾病名称</span><span>进行性神经肌肉萎缩症 (PNMD-R型)</span></li>
                         <li><span>当前状态</span><span>中度进展期，加速恶化</span></li>
-                        <li><span>预期寿命</span><span>医生预测4年，但近期加速恶化可能缩短至数月</span></li>
+                        <li><span>预期寿命</span><span>医生预测最多2年，但近期加速恶化可能缩短至数月</span></li>
                         <li><span>治疗方案</span><span>神经干细胞移植 + 基因靶向药物治疗</span></li>
                         <li><span>治疗费用</span><span>总计约18.5万元</span></li>
                         <li><span>已筹金额</span><span>3.5万元 (18.9%)</span></li>
@@ -834,7 +1016,7 @@
                         <label>支付方式</label>
                         <div class="payment-method selected">
                             <div class="payment-icon">📱</div>
-                            <div class="payment-label">微信支付 (刘德洲)</div>
+                            <div class="payment-label">微信支付</div>
                             <input type="radio" name="paymentMethod" value="wechat" class="payment-radio" checked>
                         </div>
                     </div>
@@ -843,6 +1025,10 @@
                 </form>
             </div>
         </section>
+        
+        <div class="cta-box">
+            <span class="cta-icon">❤️</span> 紧急救助
+        </div>
         
         <footer>
             
